@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html 
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/defaultLayout}">
+<section layout:fragment="content" class="contents d-flex justify-content-center">
+	<div class="w-50 rounded formBox px-5 my-3">
+		<h2 class="text-center my-3">회원가입</h2>
+		<form method="post" action="/user/sign-up">
+			<div class="input-group">
+  				<div class="input-group-prepend">
+    				<span class="input-group-text">아이디</span>
+  				</div>
+  				<input type="text" id="loginId" name="loginId" class="form-control" 
+  				placeholder="아이디를 입력하세요.">
+  				<div class="input-group-append">
+	  				<button type="button" class="btn btn-success" id="loginIdCheckBtn">중복확인</button>
+  				</div>
+			</div>
+			<div class="mb-3">
+				<!-- 아이디 체크 결과 -->
+				<div id="idCheckLength" class="small text-danger d-none">ID가 4자 아래입니다.</div>
+				<div id="idCheckDuplicated" class="small text-danger d-none">중복된 아이디입니다.</div>
+				<div id="idCheckOk" class="small text-primary d-none">사용가능한 아이디입니다.</div>
+			</div>
+			<div class="input-group mb-3">
+  				<div class="input-group-prepend">
+    				<span class="input-group-text">비밀번호</span>
+  				</div>
+  				<input type="password" id="password" name="password" class="form-control" placeholder="비밀번호를 입력하세요.">
+			</div>
+			<div class="input-group mb-3">
+  				<div class="input-group-prepend">
+    				<span class="input-group-text">비밀번호 확인</span>
+  				</div>
+  				<input type="password" id="confirmPassword" name="confirmPassword" class="form-control" placeholder="비밀번호를 입력하세요.">
+			</div>
+			<div class="input-group mb-3">
+  				<div class="input-group-prepend">
+    				<span class="input-group-text">이름</span>
+  				</div>
+  				<input type="text" id="name" name="name" class="form-control" placeholder="이름을 입력하세요.">
+			</div>
+			<div class="input-group mb-3">
+  				<div class="input-group-prepend">
+    				<span class="input-group-text">이메일 주소</span>
+  				</div>
+  				<input type="email" id="email" name="email" class="form-control" placeholder="이메일 주소를 입력하세요.">
+			</div>
+			<button type="submit" class="btn btn-primary">회원가입</button>
+		</form>
+	</div>
+</section>
+
+<th:block layout:fragment="script">
+    <script>
+		$(document).ready(function() {
+			// 중복확인
+			$('#loginIdCheckBtn').on('click', function() {
+				// 문구 초기화
+				$('#idCheckLength').addClass('d-none');
+				$('#idCheckDuplicated').addClass('d-none');
+				$('#idCheckOk').addClass('d-none');
+				
+				// alert('중복확인 눌림');
+				let loginId = $('input[name=loginId]').val().trim();
+				// alert(loginId);
+				
+				// validation
+				if(loginId.length < 4) {
+					$('#idCheckLength').removeClass('d-none');
+					return;
+				}
+				
+				// AJAX
+				$.ajax({
+					// request
+					url:'/user/is-duplicate-id'
+					, data:{"loginId":loginId}
+					// response
+					, success:function(data) {
+						if(data.code == 200) {
+							if(data.is_duplicate_id == true) {
+								// 중복
+								$('#idCheckDuplicated').removeClass('d-none');
+							} else {
+								// 사용 가능
+								$('#idCheckOk').removeClass('d-none');
+							}
+						}
+					}
+					, error:function(e) {
+						alert('중복 확인에 실패했습니다.');
+					}
+				});
+			});
+		});
+    </script>
+</th:block>

@@ -1,0 +1,10 @@
+@charset "UTF-8";
+header, footer {
+	height: 100px;
+}
+.contents {
+	min-height: 500px;
+}
+.formBox {
+	background-color: #F2F2F2;
+}
