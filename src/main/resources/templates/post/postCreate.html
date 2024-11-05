@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html 
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/defaultLayout}">
+<section layout:fragment="content" class="contents d-flex justify-content-center">
+	<div class="w-50">
+		<h1 class="mt-3">글쓰기</h1>
+		<input type="text" id="subject" class="form-control w-100 mb-1"
+		placeholder="제목을 입력하세요">
+		<textarea id="content" rows="10" class="form-control mb-3"
+		placeholder="내용을 입력하세요"></textarea>
+		<div class="d-flex justify-content-end">
+			<input type="file" id="file" accept=".jpg, .png, .gif">
+		</div>
+		<div class="d-flex justify-content-between mb-3">
+			<button id="postListBtn" class="btn btn-dark">목록으로</button>
+			<div class="d-flex">
+				<button id="clearBtn" class="btn btn-secondary">모두 지우기</button>
+				<button id="saveBtn" class="btn btn-warning ml-2">저장</button>
+			</div>
+		</div>
+	</div>
+</section>
+
+<th:block layout:fragment="script">
+    <script>
+    	$(document).ready(function() {
+    		// 목록 버튼 클릭 => 목록 화면 이동
+    		$('#postListBtn').on('click', function() {
+    			location.href = '/post/post-list-view';
+    		});
+    		
+    		// 모두 지우기
+    		$('#clearBtn').on('click', function() {
+    			$('#subject').val('');
+    			$('#content').val(''); // textarea는 val()로
+    			$('#file').val('');
+    		});
+    		
+    		// 저장하기
+    		$('#saveBtn').on('click', function() {
+    			// 제목, 내용 받아오기
+    			let subject = $('#subject').val().trim();
+    			let content = $('#content').val().trim();
+    			let fileName = $('#file').val(); // C:\fakepath\photomode_13102024_170519_1.png
+    			
+    			
+    			// validation
+    			if(!subject) {
+    				alert('제목을 입력하세요');
+    				return;
+    			}
+    			if(!content) {
+    				alert('내용을 입력하세요');
+    				return;
+    			}
+    			if(fileName) {
+    				// alert('파일이 존재합니다.');
+    				let extension = fileName.split('.').pop().toUpperCase();
+    				// console.log(extension);
+    				if($.inArray(extension, ['JPG', 'PNG', 'GIF']) == -1) {
+    					// 배열중에 있을 시에는 index 번호, 없으면 -1
+    					alert('이미지 파일(jpg, png, gif)만 업로드 할 수 있습니다.');
+    					$('#file').val('');
+    					return;
+    				}
+    			}
+    			// console.log('제목: ' + subject + "\n내용: " + content);
+    			
+    			// 이미지 업로드 시 form 태그 필요
+    			// form 태그를 js에서 만든다.
+    			let formData = new FormData();
+    			formData.append("subject", subject); // key는 form의 name과 같음 - request param명
+    			formData.append("content", content);
+    			formData.append("file", $('#file')[0].files[0]);
+    			
+    			// AJAX
+    			$.ajax({
+    				// request
+    				type:"POST"
+    				, url:"/post/create"
+    				, data:formData // FormData 통째로 보낼 수 있다
+    				// FormData로 보낼 때 아래 3가지 옵션이 필수적
+    				, processData:false // data의 속성의 값이 문자열 처리되지 않게함
+    				, contentType:false // 헤더에 콘텐츠 타입을 false로 해제
+    				, enctype:"multipart/form-data" // 이미지 파일이 전송되게 하는 옵션
+    				// response
+    				, success:function(data) {
+    					if(data.code == 200) {
+    						// 성공일 때 alert => 목록 화면
+    						alert('저장 완료!');
+    						location.href = '/post/post-list-view';
+    					} else {
+    						// 로직 상 실패일 때 alert
+    						alert(data.error_message);
+    					}
+    				}
+    				, error:function(e) {
+    					alert('글을 저장하는데 실패했습니다.');
+    				}
+    			});
+    		});
+    	});
+    </script>
+</th:block>
