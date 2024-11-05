@@ -98,9 +98,9 @@ public class UserRestController {
 		if (user != null) {
 			// 세션에 사용자 정보를 담는다.(사용자 각각)
 			HttpSession session = request.getSession();
-			request.setAttribute("userId", user.getId());
-			request.setAttribute("userLoginId", user.getLoginId());
-			request.setAttribute("userName", user.getName());
+			session.setAttribute("userId", user.getId());
+			session.setAttribute("userLoginId", user.getLoginId());
+			session.setAttribute("userName", user.getName());
 			result.put("code", 200);
 			result.put("result", "성공");	
 		} else {
