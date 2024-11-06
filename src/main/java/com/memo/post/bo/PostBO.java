@@ -15,7 +15,7 @@ public class PostBO {
 	@Autowired
 	private PostMapper postMapper;
 	@Autowired
-	private FileManagerService fileManagerService;
+	private FileManagerService fileManager;
 	
 	public List<Post> getPostListByUserId(int userId){
 		return postMapper.selectPostListByUserId(userId);
@@ -28,10 +28,9 @@ public class PostBO {
 		// file to imagePath
 		// file이 있을 때만 업로드 => imagePath를 얻어냄
 		if(file != null) {
-			
+			imagePath = fileManager.uploadFile(file, userLoginId);
 		}
 		
-		// return postMapper.insertPost(userId , subject, content, imagePath);
-		return 0;
+		return postMapper.insertPost(userId , subject, content, imagePath);
 	}
 }
