@@ -22,7 +22,13 @@ public interface PostMapper {
 			@Param("content") String content, 
 			@Param("imagePath") String imagePath);
 	
-	public Post selectPostBypostIdAndUserId(
+	public Post selectPostByPostIdAndUserId(
 			@Param("postId") int postId, 
 			@Param("userId") int userId);
+	public void updatePostByPostId(
+			@Param("postId") int postId,
+			@Param("subject") String subject, 
+			@Param("content") String content, 
+			@Param("imagePath") String imagePath);
+	public int deletePost(int postId);
 }
