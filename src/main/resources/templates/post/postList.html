@@ -17,7 +17,7 @@
 			</thead>
 			<tbody>
 				<tr th:each="post, status : ${postList}">
-					<td th:text="${status.count}"></td>
+					<td th:text="${post.id}"></td>
 					<td>
 						<!-- <a th:href="@{/post/post-detail-view(postId=${post.id}, userId=13)}" th:text="${post.subject}"></a> -->
 						<a th:href="|/post/post-detail-view?postId=${post.id}|" th:text="${post.subject}"></a>
@@ -27,6 +27,12 @@
 				</tr>
 			</tbody>
 		</table>
+		
+		<!-- 페이징 -->
+		<div class="text-center">
+			<a th:if="${prevId != 0}" th:href="|/post/post-list-view?prevId=${prevId}|" class="mr-5">&lt;&lt; 이전</a>
+			<a th:if="${nextId != 0}" th:href="|/post/post-list-view?nextId=${nextId}|">다음 &gt;&gt;</a>
+		</div>
 		
 		<!-- 글쓰기 영역 -->
 		<div class="d-flex justify-content-end">

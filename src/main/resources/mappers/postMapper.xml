@@ -11,7 +11,7 @@
  	</select>
  	<select id="selectPostListByUserId" 
  	resultType="com.memo.post.domain.Post"
- 	parameterType="int">
+ 	parameterType="map">
  		SELECT
  			`id`
 			, `userId`
@@ -23,7 +23,35 @@
  		FROM
  			`post`
  		WHERE
- 			`userId` = #{id}
+ 			`userId` = #{userId}
+ 			<if test="direction == 'next'">
+ 			<![CDATA[
+ 			AND `id` < #{standardId}
+ 			]]>
+ 			ORDER BY `id` DESC
+ 			</if>
+ 			<if test="direction == 'prev'">
+ 			<![CDATA[
+ 			AND `id` > #{standardId}
+ 			]]>
+ 			ORDER BY `id` ASC
+ 			</if>
+ 			<if test="direction == null">
+ 			ORDER BY `id` DESC
+ 			</if>
+ 		LIMIT ${limit}
+ 	</select>
+ 	<select id="selectPostIdByUserIdAsSort" 
+ 	parameterType="map" 
+ 	resultType="int">
+ 		SELECT
+ 			`id`
+ 		FROM
+ 			`post`
+ 		WHERE
+ 			`userId` = #{userId}
+ 		ORDER BY `id` ${sort}
+ 		LIMIT 1
  	</select>
  	<insert id="insertPost" 
  	parameterType="map">
